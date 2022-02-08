@@ -195,7 +195,7 @@ class Music(commands.Cog):
                 position = 0
 
             await player.seek(position * 1000)
-            return await ctx.send(f"Seeked to {seconds} seconds :fast_forward: ")
+            return await ctx.send(f"Seeked {seconds} seconds :fast_forward: ")
 
         await ctx.send("Player is not playing anything.")
 
@@ -224,6 +224,8 @@ class Music(commands.Cog):
         )
 
         tracks = ""
+        length = 0
+
         if player.loop == "CURRENT":
             next_song = f"Next > [{player.currently_playing.title}]({player.currently_playing.uri}) \n\n"
         else:
@@ -234,8 +236,18 @@ class Music(commands.Cog):
 
         for index, track in enumerate(player.queue._queue):
             tracks += f"{index + 1}. [{track.title}]({track.uri}) \n"
+            length += track.length
 
         embed.description = tracks
+
+        if length > 3600:
+            length = f"{int(length // 3600)}h {int(length % 3600 // 60)}m {int(length % 60)}s"
+        elif length > 60:
+            length = f"{int(length // 60)}m {int(length % 60)}s"
+        else:
+            length = f"{int(length)}s"
+
+        embed.set_footer(text=length)
 
         await ctx.send(embed=embed)
 
