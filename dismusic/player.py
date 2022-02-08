@@ -20,13 +20,13 @@ class DisPlayer(Player):
         self.player_is_invoking = False
         self.track_provider = "yt"
 
-    async def destroy(self, player_id, force: bool = False) -> None:
+    async def destroy(self, player_id: int) -> None:
         self.client.players.pop(player_id)
 
         await super().stop()
         await super().disconnect()
 
-    async def do_next(self, force=False) -> None:
+    async def do_next(self) -> None:
         if self.is_playing():
             return
 
