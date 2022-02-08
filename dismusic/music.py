@@ -3,9 +3,8 @@ from discord import Color, Embed
 from discord.ext import commands
 from wavelink.ext import spotify
 
-from dismusic.errors import MustBeSameChannel
-
 from .checks import voice_channel_player, voice_connected
+from .errors import MustBeSameChannel
 from .player import DisPlayer
 
 
