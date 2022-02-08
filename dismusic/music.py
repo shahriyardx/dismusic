@@ -1,5 +1,6 @@
+import asyncio
 import wavelink
-from discord import Color, Embed
+from discord import Color, Embed, ClientException
 from discord.ext import commands
 from wavelink.ext import spotify
 
@@ -42,7 +43,7 @@ class Music(commands.Cog):
         if not track:
             return await msg.edit("No song/track found with given query.")
 
-        await msg.edit(content=f"Added {track.title} to queue")
+        await msg.edit(content=f"Added `{track.title}` to queue. ")
         await player.queue.put(track)
 
         await player.do_next()
@@ -69,7 +70,11 @@ class Music(commands.Cog):
 
         msg = await ctx.send(f"Connecting to **`{ctx.author.voice.channel}`**")
 
-        player: DisPlayer = await ctx.author.voice.channel.connect(cls=DisPlayer)
+        try:
+            player: DisPlayer = await ctx.author.voice.channel.connect(cls=DisPlayer)
+        except (asyncio.TimeoutError, ClientException):
+            return await msg.edit(content="Failed to connect to voice channel.")
+
         player.bound_channel = ctx.channel
         player.bot = self.bot
 
@@ -121,6 +126,7 @@ class Music(commands.Cog):
             return await ctx.send("Volume can't greater than 100")
 
         await player.set_volume(vol)
+        await ctx.send(f"Volume set to {vol} :loud_sound:")
 
     @commands.command(aliases=["disconnect", "dc"])
     @voice_channel_player()
@@ -129,7 +135,7 @@ class Music(commands.Cog):
         player: DisPlayer = self.bot.players[ctx.guild.id]
 
         await player.destroy(ctx.guild.id)
-        await ctx.send("Stopped the player")
+        await ctx.send("Stopped the player :stop_button: ")
 
     @commands.command()
     @voice_channel_player()
@@ -142,7 +148,7 @@ class Music(commands.Cog):
                 return await ctx.send("Player is already paused.")
 
             await player.set_pause(pause=True)
-            return await ctx.send("Player is now paused.")
+            return await ctx.send("Paused :pause_button: ")
 
         await ctx.send("Player is not playing anything.")
 
@@ -157,7 +163,7 @@ class Music(commands.Cog):
                 return await ctx.send("Player is already playing.")
 
             await player.set_pause(pause=False)
-            return await ctx.send("Player is now playing.")
+            return await ctx.send("Resumed :musical_note: ")
 
         await ctx.send("Player is not playing anything.")
 
@@ -189,7 +195,7 @@ class Music(commands.Cog):
                 position = 0
 
             await player.seek(position * 1000)
-            return await ctx.send(f"Seeked to {seconds} seconds.")
+            return await ctx.send(f"Seeked to {seconds} seconds :fast_forward: ")
 
         await ctx.send("Player is not playing anything.")
 
@@ -200,7 +206,7 @@ class Music(commands.Cog):
         player: DisPlayer = self.bot.players[ctx.guild.id]
 
         result = await player.set_loop(loop_type)
-        await ctx.send(f"Loop has been set to {result}")
+        await ctx.send(f"Loop has been set to {result} :repeat: ")
 
     @commands.command(aliases=["q"])
     @voice_channel_player()
