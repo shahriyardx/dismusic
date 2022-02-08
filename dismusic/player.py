@@ -23,7 +23,6 @@ class DisPlayer(Player):
     async def destroy(self, player_id, force: bool = False) -> None:
         self.client.players.pop(player_id)
 
-        self.queue = asyncio.Queue()
         await super().stop()
         await super().disconnect()
 
@@ -35,7 +34,7 @@ class DisPlayer(Player):
             with async_timeout.timeout(300):
                 track = await self.queue.get()
         except asyncio.TimeoutError:
-            return await self.stop()
+            return await self.destroy()
 
         self.currently_playing = track
         await self.play(track)
