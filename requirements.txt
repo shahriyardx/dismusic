@@ -1,3 +1,4 @@
+typing-extensions>=4.0.1
 aiohttp==3.8.1
 async-timeout==4.0.2
 wavelink==1.1.0
