@@ -3,7 +3,7 @@ Music cog for discord bots. Supports YouTube, YoutubeMusic, SoundCloud and Spoti
 
 # Installation
 ```sh
-python3 -m install dismusic
+python3 -m pip install dismusic
 ```
 
 # Usage
