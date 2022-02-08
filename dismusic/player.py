@@ -20,7 +20,7 @@ class DisPlayer(Player):
         self.player_is_invoking = False
         self.track_provider = "yt"
 
-    async def destroy(self, player_id: int) -> None:
+    async def destroy(self, player_id: int=None) -> None:
         try:
             self.client.players.pop(player_id)
         except KeyError:
