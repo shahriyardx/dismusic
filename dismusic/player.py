@@ -6,7 +6,7 @@ import wavelink
 from discord.ext import commands
 from wavelink import Player
 
-from dismusic.errors import InvalidLoopMode, NotEnoughSong, NothingIsPlaying
+from .errors import InvalidLoopMode, NotEnoughSong, NothingIsPlaying
 
 
 class DisPlayer(Player):
