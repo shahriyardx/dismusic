@@ -1,4 +1,3 @@
-import logging
 import wavelink
 from discord import Color, Embed
 from discord.ext import commands
