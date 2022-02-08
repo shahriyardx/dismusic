@@ -21,7 +21,10 @@ class DisPlayer(Player):
         self.track_provider = "yt"
 
     async def destroy(self, player_id: int) -> None:
-        self.client.players.pop(player_id)
+        try:
+            self.client.players.pop(player_id)
+        except KeyError:
+            pass
 
         await super().stop()
         await super().disconnect()
