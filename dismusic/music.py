@@ -45,11 +45,13 @@ class Music(commands.Cog):
         for node in nodes:
             tracks = []
             try:
-                print(f"Using node {node.identifier}")
-                with async_timeout.timeout(1):
+                with async_timeout.timeout(20):
                     tracks = await provider.search(query, node=node)
                     break
-            except (LavalinkException, LoadTrackError, asyncio.TimeoutError):
+            except asyncio.TimeoutError:
+                self.bot.dispatch("dismusic_node_fail", node)
+                continue
+            except (LavalinkException, LoadTrackError):
                 continue
 
         if not tracks:
