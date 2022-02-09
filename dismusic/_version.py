@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing_extensions import Literal
 
-__version__ = "1.1.1a2"
+__version__ = "1.1.1a3"
 
 
 @dataclass
@@ -13,4 +13,4 @@ class VersionInfo:
     serial: int
 
 
-version_info = VersionInfo(1, 1, 1, "alpha", 2)
+version_info = VersionInfo(1, 1, 1, "alpha", 3)

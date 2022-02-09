@@ -76,8 +76,6 @@ class Music(commands.Cog):
         player.bound_channel = ctx.channel
         player.bot = self.bot
 
-        ctx.voice_client = player
-
         await msg.edit(content=f"Connected to **`{player.channel.name}`**")
 
     @commands.group(aliases=["p"], invoke_without_command=True)
