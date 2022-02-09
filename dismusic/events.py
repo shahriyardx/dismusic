@@ -1,3 +1,4 @@
+import wavelink
 from discord.ext import commands
 
 from .errors import (InvalidLoopMode, MustBeSameChannel, NotConnectedToVoice,
@@ -9,28 +10,27 @@ class MusicEvents(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
 
-    async def handle_end_stuck_exception(self, player: DisPlayer):
+    async def handle_end_stuck_exception(self, player: DisPlayer, track: wavelink.abc.Playable):
         if player.loop == "CURRENT":
-            return await player.play(player.currently_playing)
+            return await player.play(track)
 
         if player.loop == "PLAYLIST":
-            await player.queue.put(player.currently_playing)
+            await player.queue.put(track)
 
-        player.currently_playing = None
         player._source = None
         await player.do_next()
 
     @commands.Cog.listener()
-    async def on_wavelink_track_end(self, player, *args, **kwargs):
-        await self.handle_end_stuck_exception(player)
+    async def on_wavelink_track_end(self, player, track, *args, **kwargs):
+        await self.handle_end_stuck_exception(player, track)
 
     @commands.Cog.listener()
-    async def on_wavelink_track_exception(self, player, *args, **kwargs):
-        await self.handle_end_stuck_exception(player)
+    async def on_wavelink_track_exception(self, player, track, *args, **kwargs):
+        await self.handle_end_stuck_exception(player, track)
 
     @commands.Cog.listener()
-    async def on_wavelink_track_stuck(self, player, *args, **kwargs):
-        await self.handle_end_stuck_exception(player)
+    async def on_wavelink_track_stuck(self, player, track, *args, **kwargs):
+        await self.handle_end_stuck_exception(player, track)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):

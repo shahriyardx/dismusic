@@ -15,13 +15,11 @@ class DisPlayer(Player):
 
         self.queue = asyncio.Queue()
         self.loop = "NONE"  # CURRENT, PLAYLIST
-        self.currently_playing: wavelink.Track = None
         self.bound_channel = None
         self.player_is_invoking = False
         self.track_provider = "yt"
 
     async def destroy(self) -> None:
-        await super().stop()
         await super().disconnect()
 
     async def do_next(self) -> None:
@@ -34,14 +32,13 @@ class DisPlayer(Player):
         except asyncio.TimeoutError:
             return await self.destroy()
 
-        self.currently_playing = track
         await self.play(track)
         await self.invoke_player()
 
     async def set_loop(self, loop_type: str) -> None:
         valid_types = ["NONE", "CURRENT", "PLAYLIST"]
 
-        if not self.is_playing() or not self.currently_playing:
+        if not self.is_playing():
             raise NothingIsPlaying("Player is not playing any track. Can't loop")
 
         if not loop_type:
@@ -64,7 +61,7 @@ class DisPlayer(Player):
         return self.loop
 
     async def invoke_player(self, ctx: commands.Context = None) -> None:
-        track = self.currently_playing
+        track = self.source
 
         if not track:
             raise NothingIsPlaying("Player is not playing anything.")
@@ -87,7 +84,7 @@ class DisPlayer(Player):
         next_song = ""
 
         if self.loop == "CURRENT":
-            next_song = self.currently_playing.title
+            next_song = self.source.title
         else:
             if len(self.queue._queue) > 0:
                 next_song = self.queue._queue[0].title

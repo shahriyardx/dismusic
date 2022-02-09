@@ -202,7 +202,7 @@ class Music(commands.Cog):
 
         if player.is_playing():
             position = player.position + seconds
-            if position > player.currently_playing.length:
+            if position > player.source.length:
                 return await ctx.send("Can't seek past the end of the track.")
 
             if position < 0:
@@ -241,7 +241,7 @@ class Music(commands.Cog):
         length = 0
 
         if player.loop == "CURRENT":
-            next_song = f"Next > [{player.currently_playing.title}]({player.currently_playing.uri}) \n\n"
+            next_song = f"Next > [{player.source.title}]({player.source.uri}) \n\n"
         else:
             next_song = ""
 
