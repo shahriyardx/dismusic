@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing_extensions import Literal
 
 __version__ = "1.1.1a3"
 
@@ -9,7 +8,7 @@ class VersionInfo:
     major: int
     minor: int
     micro: int
-    releaselevel: Literal["alpha", "beta", "candidate", "final"]
+    releaselevel: str
     serial: int
 
 
