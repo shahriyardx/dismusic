@@ -1,5 +1,4 @@
 import asyncio
-from ctypes import Union
 
 import async_timeout
 import wavelink
@@ -46,7 +45,8 @@ class Music(commands.Cog):
         for node in nodes:
             tracks = []
             try:
-                with async_timeout.timeout(20):
+                print(f"Using node {node.identifier}")
+                with async_timeout.timeout(1):
                     tracks = await provider.search(query, node=node)
                     break
             except (LavalinkException, LoadTrackError, asyncio.TimeoutError):
