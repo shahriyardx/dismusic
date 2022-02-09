@@ -1,12 +1,19 @@
 import asyncio
+from ctypes import Union
+
+import async_timeout
 import wavelink
-from discord import Color, Embed, ClientException
+from discord import ClientException, Color, Embed
 from discord.ext import commands
+from wavelink import (LavalinkException, LoadTrackError, SoundCloudTrack,
+                      YouTubeMusicTrack, YouTubeTrack)
 from wavelink.ext import spotify
+from wavelink.ext.spotify import SpotifyTrack
 
 from .checks import voice_channel_player, voice_connected
 from .errors import MustBeSameChannel
 from .player import DisPlayer
+from ._classes import Provider
 
 
 class Music(commands.Cog):
@@ -23,23 +30,32 @@ class Music(commands.Cog):
             raise MustBeSameChannel("You must be in the same voice channel as the player.")
 
         track_provider = {
-            "yt": wavelink.YouTubeTrack,
-            "ytmusic": wavelink.YouTubeMusicTrack,
-            "soundcloud": wavelink.SoundCloudTrack,
-            "spotify": spotify.SpotifyTrack,
+            "yt": YouTubeTrack,
+            "ytmusic": YouTubeMusicTrack,
+            "soundcloud": SoundCloudTrack,
+            "spotify": SpotifyTrack,
         }
 
         msg = await ctx.send(f"Searching for `{query}` :mag_right:")
 
-        provider = track_provider.get(provider) if provider else track_provider.get(player.track_provider)
+        provider: Provider = (
+            track_provider.get(provider) if provider else track_provider.get(player.track_provider)
+        )
+        nodes = wavelink.NodePool._nodes
 
-        try:
-            track = await provider.search(query, return_first=True)
-        except:
-            track = None
+        for node in nodes:
+            tracks = []
+            try:
+                with async_timeout.timeout(20):
+                    tracks = await provider.search(query, node=node)
+                    break
+            except (LavalinkException, LoadTrackError, asyncio.TimeoutError):
+                continue
 
-        if not track:
+        if not tracks:
             return await msg.edit("No song/track found with given query.")
+
+        track = tracks[0]
 
         await msg.edit(content=f"Added `{track.title}` to queue. ")
         await player.queue.put(track)

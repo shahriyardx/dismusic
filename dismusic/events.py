@@ -1,13 +1,7 @@
 from discord.ext import commands
 
-from .errors import (
-    InvalidLoopMode,
-    MustBeSameChannel,
-    NotConnectedToVoice,
-    NotEnoughSong,
-    NothingIsPlaying,
-    PlayerNotConnected,
-)
+from .errors import (InvalidLoopMode, MustBeSameChannel, NotConnectedToVoice,
+                     NotEnoughSong, NothingIsPlaying, PlayerNotConnected)
 from .player import DisPlayer
 
 
