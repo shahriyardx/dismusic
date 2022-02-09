@@ -40,7 +40,7 @@ class Music(commands.Cog):
         provider: Provider = (
             track_provider.get(provider) if provider else track_provider.get(player.track_provider)
         )
-        nodes = wavelink.NodePool._nodes
+        nodes = wavelink.NodePool._nodes.values()
 
         for node in nodes:
             tracks = []
