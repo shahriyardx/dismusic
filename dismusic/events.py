@@ -46,4 +46,4 @@ class MusicEvents(commands.Cog):
         if isinstance(error, errors):
             await ctx.send(error)
         else:
-            return
+            pass
