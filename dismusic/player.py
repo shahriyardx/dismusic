@@ -16,7 +16,6 @@ class DisPlayer(Player):
         self.queue = asyncio.Queue()
         self.loop = "NONE"  # CURRENT, PLAYLIST
         self.bound_channel = None
-        self.player_is_invoking = False
         self.track_provider = "yt"
 
     async def destroy(self) -> None:
@@ -32,6 +31,7 @@ class DisPlayer(Player):
         except asyncio.TimeoutError:
             return await self.destroy()
 
+        self._source = track
         await self.play(track)
         await self.invoke_player()
 
