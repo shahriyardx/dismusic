@@ -14,7 +14,8 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix='..')
 
 bot.lavalink_nodes = [
-    {"host": "losingtime.dpaste.org", "port": 2124, "password": "SleepingOnTrains"}
+    {"host": "losingtime.dpaste.org", "port": 2124, "password": "SleepingOnTrains"},
+    # Can have multiple nodes here
 ]
 
 # If you want to use spotify search
