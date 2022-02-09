@@ -14,7 +14,7 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix='..')
 
 bot.lavalink_nodes = [
-    {"host": "lavalink.eu", "port": 2333, "password": "Raccoon"}
+    {"host": "losingtime.dpaste.org", "port": 2124, "password": "SleepingOnTrains"}
 ]
 
 # If you want to use spotify search
@@ -47,10 +47,24 @@ bot.run('TOKEN')
 # Lavalink Configs
 ```py
 # No SSL/HTTPS
-{"host": "lavalink.eu", "port": 2333, "password": "Raccoon"}
+{"host": "lavalink.eu", "port": 2333, "password": "Raccoon"} # Does not work sometimes
 {"host": "losingtime.dpaste.org", "port": 2124, "password": "SleepingOnTrains"}
 {"host": "lava.link", "port": 80, "password": "dismusic"}
 {"host": "lavalink.islantay.tk", "port": 8880, "password": "waifufufufu"}
+
+# SSL
+{"host": "lavalink.devz.cloud", "port": 443, "password": "mathiscool", "https": True},
+{"host": "lavalink2.devz.cloud", "port": 443, "password": "mathiscool", "https": True},
+{"host": "disbotlistlavalink.ml", "port": 443, "password": "LAVA", "https": True},
+{"host": "lavalink.scpcl.site", "port": 443, "password": "lvserver", "https": True},
+{"host": "lavalink.mariliun.ml", "port": 443, "password": "lavaliun", "https": True},
+{"host": "lavalinkinc.ml", "port": 443, "password": "incognito", "https": True},
+{"host": "node1.lavalink.trgop.gq", "port": 443, "password": "onionispro", "https": True},
+{"host": "node3.lavalink.trgop.gq", "port": 443, "password": "onionop", "https": True},
+{"host": "node5.lavalink.trgop.gq", "port": 443, "password": "htandsm", "https": True},
+{"host": "www.lavalinknodepublic.ml", "port": 443, "password": "mrextinctcodes", "https": True},
+{"host": "www.lavalinknodepublic2.ml", "port": 443, "password": "mrextinctcodes", "https": True},
+{"host": "lavalink.cobaltonline.net", "port": 443, "password":"cobaltlavanode23@", "https": True},
 ```
 
 [Join Discord](https://discord.gg/7SaE8v2) For any kind of help
