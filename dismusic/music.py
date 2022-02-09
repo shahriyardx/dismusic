@@ -14,12 +14,10 @@ class Music(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.Bot = bot
-        self.bot.players = dict()
-        self.bot.nodes = list()
         self.bot.loop.create_task(self.start_nodes())
 
     async def play_track(self, ctx: commands.Context, query: str, provider=None):
-        player: DisPlayer = self.bot.players[ctx.guild.id]
+        player: DisPlayer = ctx.voice_client
 
         if ctx.author.voice.channel.id != player.channel.id:
             raise MustBeSameChannel("You must be in the same voice channel as the player.")
@@ -65,7 +63,7 @@ class Music(commands.Cog):
     @voice_connected()
     async def connect(self, ctx: commands.Context):
         """Connect the player"""
-        if ctx.guild.id in self.bot.players:
+        if ctx.voice_client:
             return
 
         msg = await ctx.send(f"Connecting to **`{ctx.author.voice.channel}`**")
@@ -78,7 +76,7 @@ class Music(commands.Cog):
         player.bound_channel = ctx.channel
         player.bot = self.bot
 
-        self.bot.players[ctx.guild.id] = player
+        ctx.voice_client = player
 
         await msg.edit(content=f"Connected to **`{player.channel.name}`**")
 
@@ -117,7 +115,7 @@ class Music(commands.Cog):
     @voice_channel_player()
     async def volume(self, ctx: commands.Context, vol: int, forced=False):
         """Set volume"""
-        player: DisPlayer = self.bot.players[ctx.guild.id]
+        player: DisPlayer = ctx.voice_client
 
         if vol < 0:
             return await ctx.send("Volume can't be less than 0")
@@ -132,16 +130,16 @@ class Music(commands.Cog):
     @voice_channel_player()
     async def stop(self, ctx: commands.Context):
         """Stop the player"""
-        player: DisPlayer = self.bot.players[ctx.guild.id]
+        player: DisPlayer = ctx.voice_client
 
-        await player.destroy(ctx.guild.id)
+        await player.destroy()
         await ctx.send("Stopped the player :stop_button: ")
 
     @commands.command()
     @voice_channel_player()
     async def pause(self, ctx: commands.Context):
         """Pause the player"""
-        player: DisPlayer = self.bot.players[ctx.guild.id]
+        player: DisPlayer = ctx.voice_client
 
         if player.is_playing():
             if player.is_paused():
@@ -156,7 +154,7 @@ class Music(commands.Cog):
     @voice_channel_player()
     async def resume(self, ctx: commands.Context):
         """Resume the player"""
-        player: DisPlayer = self.bot.players[ctx.guild.id]
+        player: DisPlayer = ctx.voice_client
 
         if player.is_playing():
             if not player.is_paused():
@@ -171,7 +169,7 @@ class Music(commands.Cog):
     @voice_channel_player()
     async def skip(self, ctx: commands.Context):
         """Skip to next song in the queue."""
-        player: DisPlayer = self.bot.players[ctx.guild.id]
+        player: DisPlayer = ctx.voice_client
 
         if player.loop == "CURRENT":
             player.loop = "NONE"
@@ -184,7 +182,7 @@ class Music(commands.Cog):
     @voice_channel_player()
     async def seek(self, ctx: commands.Context, seconds: int):
         """Seek the player backward or forward"""
-        player: DisPlayer = self.bot.players[ctx.guild.id]
+        player: DisPlayer = ctx.voice_client
 
         if player.is_playing():
             position = player.position + seconds
@@ -203,7 +201,7 @@ class Music(commands.Cog):
     @voice_channel_player()
     async def loop(self, ctx: commands.Context, loop_type: str = None):
         """Set loop to `NONE`, `CURRENT` or `PLAYLIST`"""
-        player: DisPlayer = self.bot.players[ctx.guild.id]
+        player: DisPlayer = ctx.voice_client
 
         result = await player.set_loop(loop_type)
         await ctx.send(f"Loop has been set to {result} :repeat: ")
@@ -212,7 +210,7 @@ class Music(commands.Cog):
     @voice_channel_player()
     async def queue(self, ctx: commands.Context):
         """Player queue"""
-        player: DisPlayer = self.bot.players[ctx.guild.id]
+        player: DisPlayer = ctx.voice_client
 
         if len(player.queue._queue) < 1:
             return await ctx.send("Nothing is in the queue.")
@@ -255,5 +253,5 @@ class Music(commands.Cog):
     @voice_channel_player()
     async def nowplaying(self, ctx: commands.Context):
         """Currently playing song information"""
-        player: DisPlayer = self.bot.players[ctx.guild.id]
+        player: DisPlayer = ctx.voice_client
         await player.invoke_player(ctx)

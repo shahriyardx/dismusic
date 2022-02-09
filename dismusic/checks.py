@@ -15,7 +15,7 @@ def voice_connected():
 
 def player_connected():
     def predicate(ctx: commands.Context):
-        if ctx.guild.id not in ctx.bot.players:
+        if not ctx.voice_client:
             raise PlayerNotConnected("Player is not connected to any voice channel.")
 
         return True
@@ -25,10 +25,10 @@ def player_connected():
 
 def in_same_channel():
     def predicate(ctx: commands.Context):
-        if ctx.guild.id not in ctx.bot.players:
+        if not ctx.voice_client:
             raise PlayerNotConnected("Player is not connected to any voice channel.")
 
-        if ctx.bot.players[ctx.guild.id].channel.id != ctx.author.voice.channel.id:
+        if ctx.voice_client.channel.id != ctx.author.voice.channel.id:
             raise MustBeSameChannel("You must be in the same voice channel as the player.")
 
         return True
@@ -41,10 +41,10 @@ def voice_channel_player():
         if not ctx.author.voice:
             raise NotConnectedToVoice("You are not connected to any voice channel.")
 
-        if ctx.guild.id not in ctx.bot.players:
+        if not ctx.voice_client:
             raise PlayerNotConnected("Player is not connected to any voice channel.")
 
-        if ctx.bot.players[ctx.guild.id].channel.id != ctx.author.voice.channel.id:
+        if ctx.voice_client.channel.id != ctx.author.voice.channel.id:
             raise MustBeSameChannel("You must be in the same voice channel as the player.")
 
         return True
