@@ -19,6 +19,9 @@ class DisPlayer(Player):
         self.track_provider = "yt"
 
     async def destroy(self) -> None:
+        self.queue = None
+        
+        await super().stop()
         await super().disconnect()
 
     async def do_next(self) -> None:
