@@ -52,7 +52,6 @@ bot.run('TOKEN')
 # Lavalink Configs
 ```py
 # No SSL/HTTPS
-{"host": "lavalink.eu", "port": 2333, "password": "Raccoon"} # Does not work sometimes
 {"host": "losingtime.dpaste.org", "port": 2124, "password": "SleepingOnTrains"}
 {"host": "lava.link", "port": 80, "password": "dismusic"}
 {"host": "lavalink.islantay.tk", "port": 8880, "password": "waifufufufu"}
