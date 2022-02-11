@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-__version__ = "1.1.2"
+__version__ = "1.1.3b0"
 
 
 @dataclass
@@ -12,4 +12,4 @@ class VersionInfo:
     serial: int
 
 
-version_info = VersionInfo(1, 1, 2, "stable", 0)
+version_info = VersionInfo(1, 1, 3, "beta", 0)
