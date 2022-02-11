@@ -32,7 +32,10 @@ class DisPlayer(Player):
             with async_timeout.timeout(300):
                 track = await self.queue.get()
         except asyncio.TimeoutError:
-            return await self.destroy()
+            if not self.is_playing():
+                return await self.destroy()
+            
+            return
 
         self._source = track
         await self.play(track)
