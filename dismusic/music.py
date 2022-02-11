@@ -62,7 +62,8 @@ class Music(commands.Cog):
         await msg.edit(content=f"Added `{track.title}` to queue. ")
         await player.queue.put(track)
 
-        await player.do_next()
+        if not player.is_playing():
+            await player.do_next()
 
     async def start_nodes(self):
         await self.bot.wait_until_ready()

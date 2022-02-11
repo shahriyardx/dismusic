@@ -1,8 +1,8 @@
+import os
 import asyncio
 
 import async_timeout
 import discord
-import wavelink
 from discord.ext import commands
 from wavelink import Player
 
@@ -28,8 +28,10 @@ class DisPlayer(Player):
         if self.is_playing():
             return
 
+        timeout = int(os.getenv("DISMUSIC_TIMEOUT", 300))
+        
         try:
-            with async_timeout.timeout(300):
+            with async_timeout.timeout(timeout):
                 track = await self.queue.get()
         except asyncio.TimeoutError:
             if not self.is_playing():
