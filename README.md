@@ -1,11 +1,15 @@
 # dismusic
+
 Music cog for discord bots. Supports YouTube, YoutubeMusic, SoundCloud and Spotify.
 
 # Installation
+
 ```sh
 python3 -m pip install dismusic
 ```
+
 or from Github (Might be unstable)
+
 ```sh
 python3 -m pip install git+https://github.com/shahriyardx/dismusic.git
 ```
@@ -24,7 +28,7 @@ bot.lavalink_nodes = [
 
 # If you want to use spotify search
 bot.spotify_credentials = {
-    'client_id': 'CLIENT_ID_HERE', 
+    'client_id': 'CLIENT_ID_HERE',
     'client_secret': 'CLIENT_SECRET_HERE'
 }
 
@@ -35,7 +39,7 @@ bot.run('TOKEN')
 # Commands
 
 **connect** - `Connect to vc` \
-**disconnect** - `Disconnect from vc` 
+**disconnect** - `Disconnect from vc`
 
 **play** - `Play a song or playlist` \
 **pause** - `Pause player` \
@@ -49,7 +53,41 @@ bot.run('TOKEN')
 
 > Filter commands coming soon.
 
+# Events
+
+Events that this library dispatches
+
+```py
+on_dismusic_connect(player):
+    # When player connects to a voice channel
+
+on_dismusic_stop(player):
+    # When player gets disconnected
+
+on_dismusic_track_start(player, track):
+    # When a song start playing
+
+on_dismusic_track_end(player, track):
+    # When a song finished
+
+on_dismusic_track_exception(player, track):
+    # When song stops due to any exception
+
+on_dismusic_track_stuck(player, track):
+    # When a song gets stuck
+
+on_dismusic_player_pause(player):
+    # When player gets paused
+
+on_dismusic_player_resume(player):
+    # When player gets resumed
+
+on_dismusic_player_seek(player, previous_position, current_position):
+    # When player seeks
+```
+
 # Lavalink Configs
+
 ```py
 # No SSL/HTTPS
 {"host": "losingtime.dpaste.org", "port": 2124, "password": "SleepingOnTrains"}
