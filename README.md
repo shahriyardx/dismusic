@@ -58,10 +58,10 @@ bot.run('TOKEN')
 Events that this library dispatches
 
 ```py
-on_dismusic_connect(player):
+on_dismusic_player_connect(player):
     # When player connects to a voice channel
 
-on_dismusic_stop(player):
+on_dismusic_player_stop(player):
     # When player gets disconnected
 
 on_dismusic_track_start(player, track):
