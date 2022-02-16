@@ -41,6 +41,7 @@ class DisPlayer(Player):
 
         self._source = track
         await self.play(track)
+        self.client.dispatch("dismusic_track_start", self, track)
         await self.invoke_player()
 
     async def set_loop(self, loop_type: str) -> None:

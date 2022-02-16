@@ -89,6 +89,7 @@ class Music(commands.Cog):
 
         try:
             player: DisPlayer = await ctx.author.voice.channel.connect(cls=DisPlayer)
+            self.bot.dispatch("dismusic_connect", player)
         except (asyncio.TimeoutError, ClientException):
             return await msg.edit(content="Failed to connect to voice channel.")
 
@@ -151,6 +152,7 @@ class Music(commands.Cog):
 
         await player.destroy()
         await ctx.send("Stopped the player :stop_button: ")
+        self.bot.dispatch("dismusic_player_stop", player)
 
     @commands.command()
     @voice_channel_player()
@@ -163,6 +165,7 @@ class Music(commands.Cog):
                 return await ctx.send("Player is already paused.")
 
             await player.set_pause(pause=True)
+            self.bot.dispatch("dismusic_player_paused", player)
             return await ctx.send("Paused :pause_button: ")
 
         await ctx.send("Player is not playing anything.")
@@ -178,6 +181,7 @@ class Music(commands.Cog):
                 return await ctx.send("Player is already playing.")
 
             await player.set_pause(pause=False)
+            self.bot.dispatch("dismusic_player_resumed", player)
             return await ctx.send("Resumed :musical_note: ")
 
         await ctx.send("Player is not playing anything.")
@@ -193,6 +197,7 @@ class Music(commands.Cog):
 
         await player.stop()
 
+        self.bot.dispatch("dismusic_track_skipped", player)
         await ctx.send("Skipped :track_next:")
 
     @commands.command()
@@ -210,6 +215,7 @@ class Music(commands.Cog):
                 position = 0
 
             await player.seek(position * 1000)
+            self.bot.dispatch("dismusic_player_seeked", player, player.position, position)
             return await ctx.send(f"Seeked {seconds} seconds :fast_forward: ")
 
         await ctx.send("Player is not playing anything.")
