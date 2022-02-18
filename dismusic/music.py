@@ -207,7 +207,8 @@ class Music(commands.Cog):
         player: DisPlayer = ctx.voice_client
 
         if player.is_playing():
-            position = player.position + seconds
+            old_position = player.position
+            position = old_position + seconds
             if position > player.source.length:
                 return await ctx.send("Can't seek past the end of the track.")
 
@@ -215,7 +216,7 @@ class Music(commands.Cog):
                 position = 0
 
             await player.seek(position * 1000)
-            self.bot.dispatch("dismusic_player_seek", player, player.position, position)
+            self.bot.dispatch("dismusic_player_seek", player, old_position, position)
             return await ctx.send(f"Seeked {seconds} seconds :fast_forward: ")
 
         await ctx.send("Player is not playing anything.")
