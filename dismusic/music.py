@@ -21,6 +21,9 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
         self.bot.loop.create_task(self.start_nodes())
+    
+    def get_nodes(self):
+        return sorted(wavelink.NodePool._nodes.values(), key=lambda n: len(n.players))
 
     async def play_track(self, ctx: commands.Context, query: str, provider=None):
         player: DisPlayer = ctx.voice_client
@@ -40,7 +43,8 @@ class Music(commands.Cog):
         provider: Provider = (
             track_provider.get(provider) if provider else track_provider.get(player.track_provider)
         )
-        nodes = wavelink.NodePool._nodes.values()
+
+        nodes = self.get_nodes()
 
         for node in nodes:
             tracks = []
@@ -50,6 +54,7 @@ class Music(commands.Cog):
                     break
             except asyncio.TimeoutError:
                 self.bot.dispatch("dismusic_node_fail", node)
+                wavelink.NodePool._nodes.pop(node.identifier)
                 continue
             except (LavalinkException, LoadTrackError):
                 continue
