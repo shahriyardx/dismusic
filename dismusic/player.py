@@ -1,5 +1,5 @@
-import os
 import asyncio
+import os
 
 import async_timeout
 import discord
@@ -20,7 +20,7 @@ class DisPlayer(Player):
 
     async def destroy(self) -> None:
         self.queue = None
-        
+
         await super().stop()
         await super().disconnect()
 
@@ -29,14 +29,14 @@ class DisPlayer(Player):
             return
 
         timeout = int(os.getenv("DISMUSIC_TIMEOUT", 300))
-        
+
         try:
             with async_timeout.timeout(timeout):
                 track = await self.queue.get()
         except asyncio.TimeoutError:
             if not self.is_playing():
                 await self.destroy()
-            
+
             return
 
         self._source = track
@@ -76,7 +76,11 @@ class DisPlayer(Player):
             raise NothingIsPlaying("Player is not playing anything.")
 
         embed = discord.Embed(title=track.title, url=track.uri, color=discord.Color(0x2F3136))
-        embed.set_author(name=track.author, url=track.uri, icon_url=self.client.user.display_avatar.url)
+        embed.set_author(
+            name=track.author,
+            url=track.uri,
+            icon_url=self.client.user.display_avatar.url,
+        )
         try:
             embed.set_thumbnail(url=track.thumb)
         except AttributeError:

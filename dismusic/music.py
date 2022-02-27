@@ -4,15 +4,14 @@ import async_timeout
 import wavelink
 from discord import ClientException, Color, Embed
 from discord.ext import commands
-from wavelink import (LavalinkException, LoadTrackError, SoundCloudTrack,
-                      YouTubeMusicTrack, YouTubeTrack)
+from wavelink import LavalinkException, LoadTrackError, SoundCloudTrack, YouTubeMusicTrack, YouTubeTrack
 from wavelink.ext import spotify
 from wavelink.ext.spotify import SpotifyTrack
 
+from ._classes import Provider
 from .checks import voice_channel_player, voice_connected
 from .errors import MustBeSameChannel
 from .player import DisPlayer
-from ._classes import Provider
 
 
 class Music(commands.Cog):
@@ -21,7 +20,7 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
         self.bot.loop.create_task(self.start_nodes())
-    
+
     def get_nodes(self):
         return sorted(wavelink.NodePool._nodes.values(), key=lambda n: len(n.players))
 
@@ -40,14 +39,12 @@ class Music(commands.Cog):
 
         msg = await ctx.send(f"Searching for `{query}` :mag_right:")
 
-        provider: Provider = (
-            track_provider.get(provider) if provider else track_provider.get(player.track_provider)
-        )
+        provider: Provider = track_provider.get(provider) if provider else track_provider.get(player.track_provider)
 
         nodes = self.get_nodes()
 
+        tracks = list()
         for node in nodes:
-            tracks = []
             try:
                 with async_timeout.timeout(20):
                     tracks = await provider.search(query, node=node)
@@ -77,7 +74,9 @@ class Music(commands.Cog):
         for config in self.bot.lavalink_nodes:
             try:
                 node: wavelink.Node = await wavelink.NodePool.create_node(
-                    bot=self.bot, **config, spotify_client=spotify.SpotifyClient(**spotify_credential)
+                    bot=self.bot,
+                    **config,
+                    spotify_client=spotify.SpotifyClient(**spotify_credential),
                 )
                 print(f"[dismusic] INFO - Created node: {node.identifier}")
             except Exception:
