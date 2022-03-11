@@ -4,7 +4,7 @@ import async_timeout
 import wavelink
 from discord import ClientException, Color, Embed
 from discord.ext import commands
-from wavelink import LavalinkException, LoadTrackError, SoundCloudTrack, YouTubeMusicTrack, YouTubeTrack
+from wavelink import LavalinkException, LoadTrackError, SoundCloudTrack, YouTubeMusicTrack, YouTubeTrack, YouTubePlaylist
 from wavelink.ext import spotify
 from wavelink.ext.spotify import SpotifyTrack
 
@@ -59,10 +59,17 @@ class Music(commands.Cog):
         if not tracks:
             return await msg.edit("No song/track found with given query.")
 
-        track = tracks[0]
+        if isinstance(tracks, YouTubePlaylist):
+            tracks = tracks.tracks
+            for track in tracks:
+                await player.queue.put(track)
+            
+            await msg.edit(content=f"Added `{len(tracks)}` songs to queue. ")
+        else:
+            track = tracks[0]
 
-        await msg.edit(content=f"Added `{track.title}` to queue. ")
-        await player.queue.put(track)
+            await msg.edit(content=f"Added `{track.title}` to queue. ")
+            await player.queue.put(track)
 
         if not player.is_playing():
             await player.do_next()
