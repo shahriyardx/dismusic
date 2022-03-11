@@ -4,13 +4,21 @@ import async_timeout
 import wavelink
 from discord import ClientException, Color, Embed
 from discord.ext import commands
-from wavelink import LavalinkException, LoadTrackError, SoundCloudTrack, YouTubeMusicTrack, YouTubeTrack, YouTubePlaylist
+from wavelink import (
+    LavalinkException,
+    LoadTrackError,
+    SoundCloudTrack,
+    YouTubeMusicTrack,
+    YouTubePlaylist,
+    YouTubeTrack,
+)
 from wavelink.ext import spotify
 from wavelink.ext.spotify import SpotifyTrack
 
 from ._classes import Provider
 from .checks import voice_channel_player, voice_connected
 from .errors import MustBeSameChannel
+from .paginator import Paginator
 from .player import DisPlayer
 
 
@@ -63,7 +71,7 @@ class Music(commands.Cog):
             tracks = tracks.tracks
             for track in tracks:
                 await player.queue.put(track)
-            
+
             await msg.edit(content=f"Added `{len(tracks)}` songs to queue. ")
         else:
             track = tracks[0]
@@ -250,39 +258,8 @@ class Music(commands.Cog):
         if len(player.queue._queue) < 1:
             return await ctx.send("Nothing is in the queue.")
 
-        embed = Embed(color=Color(0x2F3136))
-        embed.set_author(
-            name="Queue",
-            icon_url="https://cdn.discordapp.com/attachments/776345413132877854/940247400046542948/list.png",
-        )
-
-        tracks = ""
-        length = 0
-
-        if player.loop == "CURRENT":
-            next_song = f"Next > [{player.source.title}]({player.source.uri}) \n\n"
-        else:
-            next_song = ""
-
-        if next_song:
-            tracks += next_song
-
-        for index, track in enumerate(player.queue._queue):
-            tracks += f"{index + 1}. [{track.title}]({track.uri}) \n"
-            length += track.length
-
-        embed.description = tracks
-
-        if length > 3600:
-            length = f"{int(length // 3600)}h {int(length % 3600 // 60)}m {int(length % 60)}s"
-        elif length > 60:
-            length = f"{int(length // 60)}m {int(length % 60)}s"
-        else:
-            length = f"{int(length)}s"
-
-        embed.set_footer(text=length)
-
-        await ctx.send(embed=embed)
+        paginator = Paginator(ctx, player)
+        await paginator.start()
 
     @commands.command(aliases=["np"])
     @voice_channel_player()
