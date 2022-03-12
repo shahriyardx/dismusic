@@ -38,20 +38,27 @@ class Music(commands.Cog):
         if ctx.author.voice.channel.id != player.channel.id:
             raise MustBeSameChannel("You must be in the same voice channel as the player.")
 
-        track_provider = {
+        track_providers = {
             "yt": YouTubeTrack,
+            "ytpl": YouTubePlaylist,
             "ytmusic": YouTubeMusicTrack,
             "soundcloud": SoundCloudTrack,
             "spotify": SpotifyTrack,
         }
 
+        query = query.strip("<>")
         msg = await ctx.send(f"Searching for `{query}` :mag_right:")
 
-        provider: Provider = track_provider.get(provider) if provider else track_provider.get(player.track_provider)
+        track_provider = provider if provider else player.track_provider
+
+        if track_provider == "yt" and "playlist" in query:
+            provider = "ytpl"
+
+        provider: Provider = track_providers.get(provider) if provider else track_providers.get(player.track_provider)
 
         nodes = self.get_nodes()
-
         tracks = list()
+
         for node in nodes:
             try:
                 with async_timeout.timeout(20):
