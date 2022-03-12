@@ -1,7 +1,7 @@
 import asyncio
 import math
 
-from discord import Color, Embed
+from discord import Color, Embed, Forbidden, InvalidArgument, NotFound, HTTPException
 
 
 class Paginator:
@@ -20,7 +20,7 @@ class Paginator:
 
         return length
 
-    def create_embed(self, tracks, current_page, total_pages):
+    def create_embed(self, tracks, current_page, total_pages, one_page=False):
         embed = Embed(color=Color(0x2F3136))
         embed.set_author(
             name="Queue",
@@ -39,12 +39,16 @@ class Paginator:
             queue_length += track.length
 
         for index, track in enumerate(tracks):
-            description += f"{index + 1}. [{track.title}]({track.uri}) \n"
+            description += f"{current_page * 10 + index + 1}. [{track.title}]({track.uri}) \n"
 
         embed.description = description
-        embed.set_footer(
-            text=f"Page {current_page + 1}/{total_pages}, {len(self.player.queue._queue)} tracks, {self.get_length(queue_length)}"
-        )
+
+        if one_page:
+            embed.set_footer(text=f"{len(self.player.queue._queue)} tracks, {self.get_length(queue_length)}")
+        else:
+            embed.set_footer(
+                text=f"Page {current_page + 1}/{total_pages}, {len(self.player.queue._queue)} tracks, {self.get_length(queue_length)}"
+            )
 
         return embed
 
@@ -59,14 +63,21 @@ class Paginator:
         while True:
             track_list = list(self.player.queue._queue)
             tracks = track_list[current_page * per_page : (current_page + 1) * per_page]
-            embed = self.create_embed(tracks, current_page, total_pages)
+            embed = self.create_embed(tracks, current_page, total_pages, len(track_list) <= 10)
 
             if not msg:
                 msg = await self.ctx.send(embed=embed)
-                await msg.add_reaction("⬅️")
-                await msg.add_reaction("➡️")
             else:
                 await msg.edit(embed=embed)
+
+            if len(track_list) > 10:
+                try:
+                    await msg.add_reaction("⬅️")
+                    await msg.add_reaction("➡️")
+                except (HTTPException, Forbidden, NotFound, InvalidArgument):
+                    pass
+            else:
+                break
 
             def check(reaction, user):
                 return user == self.ctx.author and str(reaction.emoji) in ["⬅️", "➡️"] and reaction.message.id == msg.id
