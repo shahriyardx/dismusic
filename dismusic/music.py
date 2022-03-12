@@ -2,7 +2,7 @@ import asyncio
 
 import async_timeout
 import wavelink
-from discord import ClientException, Color, Embed
+from discord import ClientException
 from discord.ext import commands
 from wavelink import (
     LavalinkException,
