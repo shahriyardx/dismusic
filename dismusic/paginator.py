@@ -3,6 +3,7 @@ import math
 
 from discord import Color, Embed, Forbidden, InvalidArgument, NotFound, HTTPException
 
+import _emojis as emojis
 
 class Paginator:
     def __init__(self, ctx, player) -> None:
@@ -10,7 +11,8 @@ class Paginator:
         self.player = player
 
     @staticmethod
-    def get_length(length):
+    def get_length(queue):
+        length = sum([track.length for track in queue._queue])
         if length > 3600:
             length = f"{int(length // 3600)}h {int(length % 3600 // 60)}m {int(length % 60)}s"
         elif length > 60:
@@ -33,7 +35,7 @@ class Paginator:
             next_song = ""
 
         description = next_song
-        queue_length = self.get_length(sum([track.length for track in self.player.queue._queue]))
+        queue_length = self.get_length(self.player.queue)
         
         for index, track in enumerate(tracks):
             description += f"{current_page * 10 + index + 1}. [{track.title}]({track.uri}) \n"
@@ -69,10 +71,10 @@ class Paginator:
 
             if total_pages > 1:
                 try:
-                    await msg.add_reaction("⏮️")
-                    await msg.add_reaction("⬅️")
-                    await msg.add_reaction("➡️")
-                    await msg.add_reaction("⏭️")
+                    await msg.add_reaction(emojis.FIRST)
+                    await msg.add_reaction(emojis.PREV)
+                    await msg.add_reaction(emojis.NEXT)
+                    await msg.add_reaction(emojis.LAST)
                 except (HTTPException, Forbidden, NotFound, InvalidArgument) as e:
                     print(e)
                     pass
@@ -80,7 +82,7 @@ class Paginator:
                 break
 
             def check(reaction, user):
-                valid_reactions = ["⬅️", "➡️", "⏮️", "⏭️"]
+                valid_reactions = [emojis.FIRST, emojis.PREV, emojis.NEXT, emojis.LAST]
                 return user == self.ctx.author and str(reaction.emoji) in valid_reactions and reaction.message.id == msg.id
 
             try:
@@ -88,13 +90,13 @@ class Paginator:
             except asyncio.TimeoutError:
                 break
 
-            if str(reaction.emoji) == "⬅️":
+            if str(reaction.emoji) == emojis.PREV:
                 current_page = max(0, current_page - 1)
-            elif str(reaction.emoji) == "➡️":
+            elif str(reaction.emoji) == emojis.NEXT:
                 current_page = min(total_pages - 1, current_page + 1)
-            elif str(reaction.emoji) == "⏮️":
+            elif str(reaction.emoji) == emojis.FIRST:
                 current_page = 0
-            elif str(reaction.emoji) == "⏭️":
+            elif str(reaction.emoji) == emojis.LAST:
                 current_page = total_pages - 1
 
             await msg.remove_reaction(reaction.emoji, user)

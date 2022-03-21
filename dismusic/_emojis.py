@@ -1,0 +1,4 @@
+PREV = "⬅️"
+NEXT = "➡️"
+FIRST = "⏮️"
+LAST = "⏭️"
