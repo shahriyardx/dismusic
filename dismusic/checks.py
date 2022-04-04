@@ -22,7 +22,9 @@ def voice_channel_player():
             raise PlayerNotConnected("Player is not connected to any voice channel.")
 
         if ctx.voice_client.channel.id != ctx.author.voice.channel.id:
-            raise MustBeSameChannel("You must be in the same voice channel as the player.")
+            raise MustBeSameChannel(
+                "You must be in the same voice channel as the player."
+            )
 
         return True
 

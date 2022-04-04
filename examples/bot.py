@@ -26,13 +26,19 @@ async def on_ready():
 @bot.command()
 async def rickroll(ctx: Context):
     """Never gonna give you up"""
-    await ctx.invoke(bot.get_command("play"), query="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    await ctx.invoke(
+        bot.get_command("play"), query="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    )
     await ctx.send("Never gonna give you up")
+
 
 @bot.command()
 async def kids(ctx: Context):
     """Test playlist playing"""
-    await ctx.invoke(bot.get_command("play"), query="https://www.youtube.com/playlist?list=PL2MHGlY_k-FG_Wc83QiOWj1-P5aXv-Tsm")
+    await ctx.invoke(
+        bot.get_command("play"),
+        query="https://www.youtube.com/playlist?list=PL2MHGlY_k-FG_Wc83QiOWj1-P5aXv-Tsm",
+    )
     await ctx.send("Some kids song added for you")
 
 

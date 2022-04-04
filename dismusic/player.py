@@ -60,7 +60,9 @@ class DisPlayer(Player):
                 loop_type = "NONE"
 
         if loop_type.upper() == "PLAYLIST" and len(self.queue._queue) < 1:
-            raise NotEnoughSong("There must be 2 songs in the queue in order to use the PLAYLIST loop")
+            raise NotEnoughSong(
+                "There must be 2 songs in the queue in order to use the PLAYLIST loop"
+            )
 
         if loop_type.upper() not in valid_types:
             raise InvalidLoopMode("Loop type must be `NONE`, `CURRENT` or `PLAYLIST`.")
@@ -75,7 +77,9 @@ class DisPlayer(Player):
         if not track:
             raise NothingIsPlaying("Player is not playing anything.")
 
-        embed = discord.Embed(title=track.title, url=track.uri, color=discord.Color(0x2F3136))
+        embed = discord.Embed(
+            title=track.title, url=track.uri, color=discord.Color(0x2F3136)
+        )
         embed.set_author(
             name=track.author,
             url=track.uri,

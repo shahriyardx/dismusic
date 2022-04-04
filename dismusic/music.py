@@ -36,7 +36,9 @@ class Music(commands.Cog):
         player: DisPlayer = ctx.voice_client
 
         if ctx.author.voice.channel.id != player.channel.id:
-            raise MustBeSameChannel("You must be in the same voice channel as the player.")
+            raise MustBeSameChannel(
+                "You must be in the same voice channel as the player."
+            )
 
         track_providers = {
             "yt": YouTubeTrack,
@@ -54,7 +56,11 @@ class Music(commands.Cog):
         if track_provider == "yt" and "playlist" in query:
             provider = "ytpl"
 
-        provider: Provider = track_providers.get(provider) if provider else track_providers.get(player.track_provider)
+        provider: Provider = (
+            track_providers.get(provider)
+            if provider
+            else track_providers.get(player.track_provider)
+        )
 
         nodes = self.get_nodes()
         tracks = list()
@@ -91,7 +97,9 @@ class Music(commands.Cog):
 
     async def start_nodes(self):
         await self.bot.wait_until_ready()
-        spotify_credential = getattr(self.bot, "spotify_credentials", {"client_id": "", "client_secret": ""})
+        spotify_credential = getattr(
+            self.bot, "spotify_credentials", {"client_id": "", "client_secret": ""}
+        )
 
         for config in self.bot.lavalink_nodes:
             try:
@@ -102,7 +110,9 @@ class Music(commands.Cog):
                 )
                 print(f"[dismusic] INFO - Created node: {node.identifier}")
             except Exception:
-                print(f"[dismusic] ERROR - Failed to create node {config['host']}:{config['port']}")
+                print(
+                    f"[dismusic] ERROR - Failed to create node {config['host']}:{config['port']}"
+                )
 
     @commands.command(aliases=["con"])
     @voice_connected()

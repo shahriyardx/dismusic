@@ -3,7 +3,8 @@ import math
 
 from discord import Color, Embed, Forbidden, InvalidArgument, NotFound, HTTPException
 
-import _emojis as emojis
+from ._emojis import Emojis
+
 
 class Paginator:
     def __init__(self, ctx, player) -> None:
@@ -30,20 +31,26 @@ class Paginator:
         )
 
         if self.player.loop == "CURRENT":
-            next_song = f"Next > [{self.player.source.title}]({self.player.source.uri}) \n\n"
+            next_song = (
+                f"Next > [{self.player.source.title}]({self.player.source.uri}) \n\n"
+            )
         else:
             next_song = ""
 
         description = next_song
         queue_length = self.get_length(self.player.queue)
-        
+
         for index, track in enumerate(tracks):
-            description += f"{current_page * 10 + index + 1}. [{track.title}]({track.uri}) \n"
+            description += (
+                f"{current_page * 10 + index + 1}. [{track.title}]({track.uri}) \n"
+            )
 
         embed.description = description
 
         if total_pages == 1:
-            embed.set_footer(text=f"{len(self.player.queue._queue)} tracks, {queue_length}")
+            embed.set_footer(
+                text=f"{len(self.player.queue._queue)} tracks, {queue_length}"
+            )
         else:
             embed.set_footer(
                 text=f"Page {current_page + 1}/{total_pages}, {len(self.player.queue._queue)} tracks, {queue_length}"
@@ -71,10 +78,10 @@ class Paginator:
 
             if total_pages > 1:
                 try:
-                    await msg.add_reaction(emojis.FIRST)
-                    await msg.add_reaction(emojis.PREV)
-                    await msg.add_reaction(emojis.NEXT)
-                    await msg.add_reaction(emojis.LAST)
+                    await msg.add_reaction(Emojis.FIRST)
+                    await msg.add_reaction(Emojis.PREV)
+                    await msg.add_reaction(Emojis.NEXT)
+                    await msg.add_reaction(Emojis.LAST)
                 except (HTTPException, Forbidden, NotFound, InvalidArgument) as e:
                     print(e)
                     pass
@@ -82,21 +89,27 @@ class Paginator:
                 break
 
             def check(reaction, user):
-                valid_reactions = [emojis.FIRST, emojis.PREV, emojis.NEXT, emojis.LAST]
-                return user == self.ctx.author and str(reaction.emoji) in valid_reactions and reaction.message.id == msg.id
+                valid_reactions = [Emojis.FIRST, Emojis.PREV, Emojis.NEXT, Emojis.LAST]
+                return (
+                    user == self.ctx.author
+                    and str(reaction.emoji) in valid_reactions
+                    and reaction.message.id == msg.id
+                )
 
             try:
-                reaction, user = await self.ctx.bot.wait_for("reaction_add", timeout=60.0, check=check)
+                reaction, user = await self.ctx.bot.wait_for(
+                    "reaction_add", timeout=60.0, check=check
+                )
             except asyncio.TimeoutError:
                 break
 
-            if str(reaction.emoji) == emojis.PREV:
+            if str(reaction.emoji) == Emojis.PREV:
                 current_page = max(0, current_page - 1)
-            elif str(reaction.emoji) == emojis.NEXT:
+            elif str(reaction.emoji) == Emojis.NEXT:
                 current_page = min(total_pages - 1, current_page + 1)
-            elif str(reaction.emoji) == emojis.FIRST:
+            elif str(reaction.emoji) == Emojis.FIRST:
                 current_page = 0
-            elif str(reaction.emoji) == emojis.LAST:
+            elif str(reaction.emoji) == Emojis.LAST:
                 current_page = total_pages - 1
 
             await msg.remove_reaction(reaction.emoji, user)

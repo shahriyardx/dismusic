@@ -16,7 +16,9 @@ class MusicEvents(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
 
-    async def handle_end_stuck_exception(self, player: DisPlayer, track: wavelink.abc.Playable):
+    async def handle_end_stuck_exception(
+        self, player: DisPlayer, track: wavelink.abc.Playable
+    ):
         if player.loop == "CURRENT":
             return await player.play(track)
 
