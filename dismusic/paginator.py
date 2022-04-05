@@ -1,9 +1,10 @@
 import asyncio
 import math
 
-from discord import Color, Embed, Forbidden, InvalidArgument, NotFound, HTTPException
+from discord import (Color, Embed, Forbidden, HTTPException, InvalidArgument,
+                     NotFound)
 
-from ._emojis import Emojis
+from ._classes import Emojis
 
 
 class Paginator:

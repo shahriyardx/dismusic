@@ -4,14 +4,8 @@ import async_timeout
 import wavelink
 from discord import ClientException
 from discord.ext import commands
-from wavelink import (
-    LavalinkException,
-    LoadTrackError,
-    SoundCloudTrack,
-    YouTubeMusicTrack,
-    YouTubePlaylist,
-    YouTubeTrack,
-)
+from wavelink import (LavalinkException, LoadTrackError, SoundCloudTrack,
+                      YouTubeMusicTrack, YouTubePlaylist, YouTubeTrack)
 from wavelink.ext import spotify
 from wavelink.ext.spotify import SpotifyTrack
 
