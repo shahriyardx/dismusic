@@ -1,6 +1,7 @@
 import wavelink
 from discord.ext import commands
 
+from ._classes import Loop
 from .errors import (InvalidLoopMode, MustBeSameChannel, NotConnectedToVoice,
                      NotEnoughSong, NothingIsPlaying, PlayerNotConnected)
 from .player import DisPlayer
@@ -13,10 +14,10 @@ class MusicEvents(commands.Cog):
     async def handle_end_stuck_exception(
         self, player: DisPlayer, track: wavelink.abc.Playable
     ):
-        if player.loop == "CURRENT":
+        if player.loop == Loop.CURRENT:
             return await player.play(track)
 
-        if player.loop == "PLAYLIST":
+        if player.loop == Loop.PLAYLIST:
             await player.queue.put(track)
 
         player._source = None

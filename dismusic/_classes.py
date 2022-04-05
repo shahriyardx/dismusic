@@ -16,3 +16,12 @@ class Emojis:
     NEXT = "➡️"
     FIRST = "⏮️"
     LAST = "⏭️"
+
+
+@dataclass
+class Loop:
+    NONE = "NONE"
+    CURRENT = "CURRENT"
+    PLAYLIST = "PLAYLIST"
+
+    TYPES = [NONE, CURRENT, PLAYLIST]

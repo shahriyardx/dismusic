@@ -4,7 +4,7 @@ import math
 from discord import (Color, Embed, Forbidden, HTTPException, InvalidArgument,
                      NotFound)
 
-from ._classes import Emojis
+from ._classes import Emojis, Loop
 
 
 class Paginator:
@@ -31,7 +31,7 @@ class Paginator:
             icon_url="https://cdn.discordapp.com/attachments/776345413132877854/940247400046542948/list.png",
         )
 
-        if self.player.loop == "CURRENT":
+        if self.player.loop == Loop.CURRENT:
             next_song = (
                 f"Next > [{self.player.source.title}]({self.player.source.uri}) \n\n"
             )
