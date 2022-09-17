@@ -1,14 +1,19 @@
 import os
 
+from discord import Intents
 from discord.ext import commands
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
 
 load_dotenv(".env")
-bot = commands.Bot(command_prefix="?")
+
+intents = Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix="?", intents=intents)
 
 bot.lavalink_nodes = [
-    {"host": "losingtime.dpaste.org", "port": 2124, "password": "SleepingOnTrains"},
+    {"host": "lavalink.oops.wtf", "port": 2000, "password": "www.freelavalink.ga"},
     # Can have multiple nodes here
 ]
 
@@ -44,5 +49,4 @@ async def kids(ctx: Context):
 
 
 bot.load_extension("dismusic")
-bot.load_extension("jishaku")
 bot.run(os.getenv("TOKEN"))
