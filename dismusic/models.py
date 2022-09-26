@@ -31,13 +31,14 @@ class LavalinkConfig:
     host: str
     port: Union[int, str]
     password: str
+    https: bool = False
 
     def asdict(self):
         return asdict(self)
 
 
 @dataclass
-class SpotifyCredeentials:
+class SpotifyCredentials:
     client_id: str
     client_secret: str
 

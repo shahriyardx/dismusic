@@ -15,7 +15,7 @@ from wavelink import (
 from wavelink.ext import spotify
 from wavelink.ext.spotify import SpotifyTrack
 
-from .._classes import Provider
+from ..models import Provider
 from ..checks import voice_channel_player, voice_connected
 from ..errors import MustBeSameChannel
 from ..paginator import Paginator
@@ -137,8 +137,19 @@ class Music(commands.Cog):
         await msg.edit(content=f"Connected to **`{player.channel.name}`**")
 
     @commands.group(
+        aliases=["p"],
+        invoke_without_command=True,
+    )
+    @voice_connected()
+    async def play(self, ctx: commands.Context, *, query: str):
+        """Play or add song to queue (Defaults to YouTube)"""
+        await ctx.invoke(self.connect)
+        await self.play_track(
+            ctx, query, provider=provider_map[ctx.invoked_with or "play"]
+        )
+
+    @play.command(
         aliases=[
-            "p",
             "yt",
             "youtube",
             "ytmusic",
@@ -148,14 +159,12 @@ class Music(commands.Cog):
             "spotify",
             "sp",
         ],
-        invoke_without_command=True,
     )
-    @voice_connected()
-    async def play(self, ctx: commands.Context, *, query: str):
-        """Play or add song to queue (Defaults to YouTube)"""
+    async def _player(self, ctx: commands.Context, *, query: str):
+        """Play or add song to queue"""
         await ctx.invoke(self.connect)
         await self.play_track(
-            ctx, query, provider=provider_map[ctx.invoked_with or "play"]
+            ctx, query, provider=provider_map[ctx.invoked_with or "yt"]
         )
 
     @commands.command(aliases=["vol"])

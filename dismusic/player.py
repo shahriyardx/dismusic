@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from wavelink import Player
 
-from ._classes import Loop
+from .models import Loop
 from .errors import InvalidLoopMode, NotEnoughSong, NothingIsPlaying
 
 
@@ -35,13 +35,11 @@ class DisPlayer(Player):
             with async_timeout.timeout(timeout):
                 track = await self.queue.get()
         except asyncio.TimeoutError:
-            if not self.is_playing():
-                await self.destroy()
-
             return
 
         self._source = track
         await self.play(track)
+
         self.client.dispatch("dismusic_track_start", self, track)
         await self.invoke_player()
 

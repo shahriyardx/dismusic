@@ -5,6 +5,7 @@ from discord.ext import commands
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
 from dismusic import init_dismusic
+from dismusic.models import LavalinkConfig, SpotifyCredentials
 
 load_dotenv(".env")
 
@@ -16,13 +17,12 @@ bot = commands.Bot(command_prefix="?", intents=intents)
 init_dismusic(
     bot,
     lavalink_nodes=[
-        {"host": "lavalink.oops.wtf", "port": 2000, "password": "www.freelavalink.ga"},
+        LavalinkConfig(
+            host="lavalink.oops.wtf", port=2000, password="www.freelavalink.ga"
+        )
         # Can have multiple nodes here
     ],
-    spotify_credentials={
-        "client_id": "CLIENT_ID_HERE",
-        "client_secret": "CLIENT_SECRET_HERE",
-    },
+    spotify_credentials=SpotifyCredentials.default(),
 )
 
 
@@ -50,5 +50,5 @@ async def kids(ctx: Context):
     await ctx.send("Some kids song added for you")
 
 
-bot.load_extension("dismusic.prefix")
+bot.load_extension("dismusic.cogs.prefix")
 bot.run(os.getenv("TOKEN"))
