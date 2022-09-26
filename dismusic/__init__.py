@@ -12,10 +12,4 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 """
 
 from ._version import __version__, version_info
-from .events import MusicEvents
-from .music import Music
-
-
-def setup(bot):
-    bot.add_cog(Music(bot))
-    bot.add_cog(MusicEvents(bot))
+from .core import init_dismusic

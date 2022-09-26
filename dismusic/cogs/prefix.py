@@ -4,16 +4,24 @@ import async_timeout
 import wavelink
 from discord import ClientException
 from discord.ext import commands
-from wavelink import (LavalinkException, LoadTrackError, SoundCloudTrack,
-                      YouTubeMusicTrack, YouTubePlaylist, YouTubeTrack)
+from wavelink import (
+    LavalinkException,
+    LoadTrackError,
+    SoundCloudTrack,
+    YouTubeMusicTrack,
+    YouTubePlaylist,
+    YouTubeTrack,
+)
 from wavelink.ext import spotify
 from wavelink.ext.spotify import SpotifyTrack
 
-from ._classes import Provider
-from .checks import voice_channel_player, voice_connected
-from .errors import MustBeSameChannel
-from .paginator import Paginator
-from .player import DisPlayer
+from .._classes import Provider
+from ..checks import voice_channel_player, voice_connected
+from ..errors import MustBeSameChannel
+from ..paginator import Paginator
+from ..player import DisPlayer
+from ..helper import provider_map
+from ..events import MusicEvents
 
 
 class Music(commands.Cog):
@@ -103,9 +111,9 @@ class Music(commands.Cog):
                     spotify_client=spotify.SpotifyClient(**spotify_credential),
                 )
                 print(f"[dismusic] INFO - Created node: {node.identifier}")
-            except Exception:
+            except Exception as e:
                 print(
-                    f"[dismusic] ERROR - Failed to create node {config['host']}:{config['port']}"
+                    f"[dismusic] ERROR - Failed to create node {config['host']}:{config['port']} {e.__traceback__}"
                 )
 
     @commands.command(aliases=["con"])
@@ -128,44 +136,31 @@ class Music(commands.Cog):
 
         await msg.edit(content=f"Connected to **`{player.channel.name}`**")
 
-    @commands.group(aliases=["p"], invoke_without_command=True)
+    @commands.group(
+        aliases=[
+            "p",
+            "yt",
+            "youtube",
+            "ytmusic",
+            "youtubemusic",
+            "sc",
+            "soundcloud",
+            "spotify",
+            "sp",
+        ],
+        invoke_without_command=True,
+    )
     @voice_connected()
     async def play(self, ctx: commands.Context, *, query: str):
         """Play or add song to queue (Defaults to YouTube)"""
         await ctx.invoke(self.connect)
-        await self.play_track(ctx, query)
-
-    @play.command(aliases=["yt"])
-    @voice_connected()
-    async def youtube(self, ctx: commands.Context, *, query: str):
-        """Play a YouTube track"""
-        await ctx.invoke(self.connect)
-        await self.play_track(ctx, query, "yt")
-
-    @play.command(aliases=["ytmusic"])
-    @voice_connected()
-    async def youtubemusic(self, ctx: commands.Context, *, query: str):
-        """Play a YouTubeMusic track"""
-        await ctx.invoke(self.connect)
-        await self.play_track(ctx, query, "ytmusic")
-
-    @play.command(aliases=["sc"])
-    @voice_connected()
-    async def soundcloud(self, ctx: commands.Context, *, query: str):
-        """Play a SoundCloud track"""
-        await ctx.invoke(self.connect)
-        await self.play_track(ctx, query, "soundcloud")
-
-    @play.command(aliases=["sp"])
-    @voice_connected()
-    async def spotify(self, ctx: commands.Context, *, query: str):
-        """play a spotify track"""
-        await ctx.invoke(self.connect)
-        await self.play_track(ctx, query, "spotify")
+        await self.play_track(
+            ctx, query, provider=provider_map[ctx.invoked_with or "play"]
+        )
 
     @commands.command(aliases=["vol"])
     @voice_channel_player()
-    async def volume(self, ctx: commands.Context, vol: int, forced=False):
+    async def volume(self, ctx: commands.Context, vol: int, forced: bool = False):
         """Set volume"""
         player: DisPlayer = ctx.voice_client
 
@@ -250,7 +245,6 @@ class Music(commands.Cog):
                 position = 0
 
             await player.seek(position * 1000)
-            self.bot.dispatch("dismusic_player_seek", player, old_position, position)
             return await ctx.send(f"Seeked {seconds} seconds :fast_forward: ")
 
         await ctx.send("Player is not playing anything.")
@@ -282,3 +276,8 @@ class Music(commands.Cog):
         """Currently playing song information"""
         player: DisPlayer = ctx.voice_client
         await player.invoke_player(ctx)
+
+
+def setup(bot):
+    bot.add_cog(Music(bot))
+    bot.add_cog(MusicEvents(bot))

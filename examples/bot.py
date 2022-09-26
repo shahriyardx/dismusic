@@ -4,6 +4,7 @@ from discord import Intents
 from discord.ext import commands
 from discord.ext.commands.context import Context
 from dotenv import load_dotenv
+from dismusic import init_dismusic
 
 load_dotenv(".env")
 
@@ -12,16 +13,17 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="?", intents=intents)
 
-bot.lavalink_nodes = [
-    {"host": "lavalink.oops.wtf", "port": 2000, "password": "www.freelavalink.ga"},
-    # Can have multiple nodes here
-]
-
-# If you want to use spotify search
-bot.spotify_credentials = {
-    "client_id": "CLIENT_ID_HERE",
-    "client_secret": "CLIENT_SECRET_HERE",
-}
+init_dismusic(
+    bot,
+    lavalink_nodes=[
+        {"host": "lavalink.oops.wtf", "port": 2000, "password": "www.freelavalink.ga"},
+        # Can have multiple nodes here
+    ],
+    spotify_credentials={
+        "client_id": "CLIENT_ID_HERE",
+        "client_secret": "CLIENT_SECRET_HERE",
+    },
+)
 
 
 @bot.event
@@ -48,5 +50,5 @@ async def kids(ctx: Context):
     await ctx.send("Some kids song added for you")
 
 
-bot.load_extension("dismusic")
+bot.load_extension("dismusic.prefix")
 bot.run(os.getenv("TOKEN"))
